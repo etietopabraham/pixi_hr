@@ -15,17 +15,18 @@ import joblib
 from box import ConfigBox
 from box.exceptions import BoxValueError
 from ensure import ensure_annotations
+from typing import Union
 
 from pixi_hr import logger
 
 
 @ensure_annotations
-def read_yaml(path_to_yaml: str) -> ConfigBox:
+def read_yaml(path_to_yaml: Path) -> ConfigBox:
     """
     Reads a yaml file, and returns a ConfigBox object.
 
     Args:
-        path_to_yaml (str): Path to the yaml file.
+        path_to_yaml (Path): Path to the yaml file.
 
     Raises:
         ValueError: If the yaml file is empty.
