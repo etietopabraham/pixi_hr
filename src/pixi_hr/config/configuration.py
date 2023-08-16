@@ -1,7 +1,7 @@
 from src.pixi_hr.constants import *
 from src.pixi_hr.utils.common import read_yaml, create_directories
 
-from pixi_hr.entity.config_entity import DataIngestionConfig
+from pixi_hr.entity.config_entity import (DataIngestionConfig, DataValidationConfig)
 
 class ConfigurationManager:
     def __init__(
@@ -12,7 +12,8 @@ class ConfigurationManager:
         
         # Load the configuration details from the YAML file
 
-        print(type(config_filepath), config_filepath)
+        # print(type(config_filepath), config_filepath)
+        
         self.config = read_yaml(config_filepath)
         # Load the parameters details from the YAML file
         self.params = read_yaml(params_filepath)
@@ -39,3 +40,23 @@ class ConfigurationManager:
         )
 
         return data_ingestion_config
+    
+
+    def get_data_validation_config(self) -> DataValidationConfig:
+        # Extract data validation configuration from the main configuration
+        config = self.config.data_validation
+        # Extract schema columns from schema.yaml
+        schema = self.schema.COLUMNS
+
+        # Create directories specified in the data valition configuration
+        create_directories([config.root_dir])
+
+        # Create an instance of the DataValidationConfig dataclass using the extracted configuration
+        data_validation_config = DataValidationConfig(
+            root_dir=config.root_dir,
+            unzip_data_dir=config.unzip_data_dir,
+            STATUS_FILE=config.STATUS_FILE,
+            all_schema=schema
+        )
+
+        return data_validation_config
