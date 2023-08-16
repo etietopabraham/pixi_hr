@@ -1,6 +1,6 @@
 from pixi_hr import logger
 from pixi_hr.pipeline.stage_01_data_ingestion import DataIngestionTrainingPipeline
-from pixi_hr.pipeline.state_02_data_validation import DataValidationTrainingPipeline
+from pixi_hr.pipeline.stage_02_data_validation import DataValidationTrainingPipeline
 
 def main():
     """
