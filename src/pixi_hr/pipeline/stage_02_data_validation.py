@@ -10,7 +10,7 @@ class DataValidationTrainingPipeline:
     1. Initializes configuration management.
     2. Fetches the data validation configuration.
     3. Initializes the DataValidation component using the fetched configuration.
-    4. Validates the columns of the data.
+    4. Validates the columns and other aspects of the data.
     """
 
     STAGE_NAME = "Data Validation Stage"
@@ -39,16 +39,26 @@ class DataValidationTrainingPipeline:
         logger.info("Initializing DataValidation Component...")
         data_validation = DataValidation(config=data_validation_config)
 
-        # Step 4: Validate Columns
-        logger.info("Validating Columns...")
-        validation_status = data_validation.validate_columns()
+        # Step 4: Execute all validation functions
+        logger.info("Executing Data Validations...")
 
-        # Log the result of the validation
-        if validation_status:
-            logger.info("All columns successfully validated.")
-        else:
-            logger.warning("Column validation failed. Check logs for more details.")
-        
+        validations = [
+            ("Column Validation", data_validation.validate_columns),
+            ("Date of Job Post Validation", data_validation.validate_date_of_job_post),
+            ("Text Fields Validation", lambda: data_validation.validate_text_fields(
+                columns=['title', 'company_name', 'job_location', 'job_summary', 'job_description']  # or any other columns you'd like to validate
+            )),
+            ("Job Link Validation", data_validation.validate_job_link),
+            ("Job Type Validation", data_validation.validate_job_type),
+            ("Job Qualifications Validation", data_validation.validate_job_qualifications),
+            ("Duplicate Entries Handling", data_validation.handle_duplicates)
+        ]
+
+        for validation_name, validation_function in validations:
+            logger.info(f"Executing {validation_name}...")
+            validation_function()
+
+        logger.info("All validations completed successfully.")
         logger.info("Data Validation Pipeline completed successfully.")
 
 if __name__ == '__main__':
