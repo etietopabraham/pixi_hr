@@ -56,6 +56,7 @@ class ConfigurationManager:
             root_dir=config.root_dir,
             unzip_data_dir=config.unzip_data_dir,
             STATUS_FILE=config.STATUS_FILE,
+            validated_data_file=config.validated_data_file,
             all_schema=schema
         )
 

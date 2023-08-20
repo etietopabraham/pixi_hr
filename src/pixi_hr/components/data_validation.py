@@ -172,5 +172,39 @@ class DataValidation:
         if num_duplicates > 0:
             self.df.drop_duplicates(subset='job_link', inplace=True)
             logger.info(f"Dropped {num_duplicates} duplicate rows based on the 'job_link' column.")
+            self._save_dataframe()
         else:
             logger.info("No duplicates found based on the 'job_link' column.")
+
+    
+    def _save_dataframe(self):
+        """
+        Save the dataframe to the output path specified in the configuration.
+
+        I think it will be best practice to save the updated data frame in 
+        our data validation artifacts directory, and work with only the validated data.
+
+        That's a prudent approach. There are a few reasons why this makes sense:
+
+        Data Provenance: Saving the validated data separately ensures that you always 
+        have a trace of how your data has changed at each step of your pipeline. 
+        This is especially crucial for auditing, reproducing results, or troubleshooting issues down the line.
+
+        Data Integrity: By keeping the original data untouched, you have a fallback. 
+        If there's ever a concern about the validation or transformation process, 
+        you can always revert to the original dataset and re-run your validations.
+
+        Efficiency: Once the data has been validated, future processes or pipelines can 
+        directly use the validated data without having to re-run the validation steps, 
+        saving time and computational resources.
+
+        Clarity: For team members or other collaborators, having clearly demarcated datasets 
+        (raw vs. validated) can make understanding the data processing pipeline much clearer. 
+        They can easily identify which dataset to use based on the stage of analysis or modeling they are in.
+        """
+        try:
+            self.df.to_csv(self.config.validated_data_file, index=False)
+            logger.info(f"Data saved successfully to {self.config.validated_data_file}")
+        except Exception as e:
+            logger.error(f"Error while saving the dataframe: {e}")
+            raise

@@ -24,5 +24,8 @@ class DataValidationConfig:
     # Path to a status file used to track the progress or status of data validation.
     STATUS_FILE: str
 
+    # Location of the validated data.
+    validated_data_file: Path
+    
     # Store all schema configuration
     all_schema: dict

@@ -18,8 +18,18 @@ data_validation:
   # Path to the root directory where data validation artifacts are stored.
   root_dir: artifacts/data_validation
   
+  # Location of the validated data (in this case, a CSV file).
+  validated_data_file: artifacts/data_validation/validated_jobs_data.csv
+  
   # Location of the extracted data (in this case, a CSV file) that needs to be validated.
   unzip_data_dir: artifacts/data_ingestion/jobs_data_simply_hired.csv
   
   # Path to a status file used to track the progress or status of data validation.
   STATUS_FILE: artifacts/data_validation/status.txt
+
+
+
+# Data Transformation.
+data_transformation:
+  root_dir: artifacts/data_transformation
+  data_path: artifacts/data_ingestion/jobs_data_simply_hired.csv
