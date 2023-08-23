@@ -8,6 +8,8 @@ from pixi_hr import logger
 from pixi_hr.pipeline.stage_01_data_ingestion import DataIngestionTrainingPipeline
 from pixi_hr.pipeline.stage_02_data_validation import DataValidationTrainingPipeline
 from pixi_hr.pipeline.stage_03_data_transformation import DataTransformationPipeline
+from pixi_hr.pipeline.stage_04_model_trainer import ModelTrainerPipeline
+
 
 def main():
     """
@@ -23,7 +25,7 @@ def main():
     """
 
     # List of pipeline stages to be executed in sequence
-    execution_sequence = [DataIngestionTrainingPipeline(), DataValidationTrainingPipeline(), DataTransformationPipeline()]
+    execution_sequence = [DataIngestionTrainingPipeline(), DataValidationTrainingPipeline(), DataTransformationPipeline(), ModelTrainerPipeline()]
 
     for pipeline in execution_sequence:
         try:

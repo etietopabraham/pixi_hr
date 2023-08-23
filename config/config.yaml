@@ -1,8 +1,10 @@
 # Root directory for all artifacts
+
 artifacts_root: artifacts
 
 
 # Configuration related to data ingestion
+
 data_ingestion:
 
   # Directory where data ingestion artifacts are stored
@@ -19,6 +21,7 @@ data_ingestion:
 
 
 # Configuration related to data validation.
+
 data_validation:
   
   # Path to the root directory where data validation artifacts are stored.
@@ -36,6 +39,7 @@ data_validation:
 
 
 # Data Transformation Configuration
+
 data_transformation:
   
   # Root directory where all data transformation artifacts will be stored.
@@ -44,5 +48,20 @@ data_transformation:
   # Path to the validated dataset that will be used as input for transformation.
   data_path: artifacts/data_validation/validated_jobs_data.csv
 
+
+# Model Trainer Configuration
+
+model_trainer:
+  # Path to the root directory where model trainer artifacts are stored.
+  root_dir: artifacts/model_trainer
+  
+  # Location of the training dataset (in this case, a CSV file).
+  train_data_path: artifacts/data_transformation/train_data.csv
+  
+  # Location of the testing dataset (in this case, a CSV file).
+  test_data_path: artifacts/data_transformation/test_data.csv
+  
+  # Name of the serialized trained model to be saved.
+  model_name: model.joblib
 
 

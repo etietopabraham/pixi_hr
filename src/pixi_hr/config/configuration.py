@@ -1,7 +1,7 @@
 from src.pixi_hr.constants import *
 from src.pixi_hr.utils.common import read_yaml, create_directories
 
-from pixi_hr.entity.config_entity import (DataIngestionConfig, DataValidationConfig, DataTransformationConfig)
+from pixi_hr.entity.config_entity import (DataIngestionConfig, DataValidationConfig, DataTransformationConfig, ModelTrainerConfig)
 
 class ConfigurationManager:
     def __init__(
@@ -89,3 +89,33 @@ class ConfigurationManager:
         )
 
         return data_transformation_config
+
+
+    def get_model_trainer_config(self) -> ModelTrainerConfig:
+            """
+            Fetches the Model Trainer Configuration.
+
+            Returns:
+                ModelTrainerConfig: A dataclass instance containing the model trainer configuration.
+            """
+            
+            # Extract model trainer configuration and parameters for ElasticNet
+            config = self.config.model_trainer
+            params = self.params.ElasticNet
+            schema = self.schema.TARGET_COLUMN
+
+            # Create the directory where model training artifacts will be stored
+            create_directories([config.root_dir])
+
+            # Create an instance of the ModelTrainerConfig dataclass using the extracted configuration and parameters
+            model_trainer_config = ModelTrainerConfig(
+                root_dir=config.root_dir,
+                train_data_path=config.train_data_path,
+                test_data_path=config.test_data_path,
+                model_name=config.model_name,
+                alpha=params.alpha,
+                l1_ratio=params.l1_ratio,
+                target_column=schema.name
+            )
+
+            return model_trainer_config

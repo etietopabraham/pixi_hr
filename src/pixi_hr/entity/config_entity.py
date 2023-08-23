@@ -49,3 +49,29 @@ class DataTransformationConfig:
 
     # Path to the validated dataset for transformation
     data_path: Path
+
+
+@dataclass(frozen=True)
+class ModelTrainerConfig:
+    """
+    Configuration entity for the Model Trainer.
+
+    Attributes:
+    - root_dir: Directory where model training artifacts will be stored.
+    - train_data_path: Path to the training data file.
+    - test_data_path: Path to the test data file.
+    - model_name: Name of the model file to be saved.
+    - alpha: Regularization strength for the ElasticNet model. 
+             Combines the L1 and L2 penalties. Higher values specify stronger regularization.
+    - l1_ratio: The mix between L1 and L2 regularization. 
+                0 <= l1_ratio <= 1. 0 corresponds to L2 (Ridge) and 1 to L1 (Lasso).
+    - target_column: Name of the column in the dataset that represents the target variable.
+    """
+
+    root_dir: Path
+    train_data_path: Path
+    test_data_path: Path
+    model_name: str
+    alpha: float
+    l1_ratio: float
+    target_column: str
