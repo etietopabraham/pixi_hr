@@ -1,7 +1,7 @@
 from src.pixi_hr.constants import *
 from src.pixi_hr.utils.common import read_yaml, create_directories
 
-from pixi_hr.entity.config_entity import (DataIngestionConfig, DataValidationConfig)
+from pixi_hr.entity.config_entity import (DataIngestionConfig, DataValidationConfig, DataTransformationConfig)
 
 class ConfigurationManager:
     def __init__(
@@ -61,3 +61,31 @@ class ConfigurationManager:
         )
 
         return data_validation_config
+    
+
+    def get_data_transformation_config(self) -> DataTransformationConfig:
+        """
+        Extracts the data transformation configuration from the main config.
+
+        The function performs the following steps:
+        1. Reads the data transformation section of the configuration.
+        2. Ensures the specified root directory for data transformation exists (creates it if not).
+        3. Returns a DataTransformationConfig object initialized with the extracted configuration.
+
+        Returns:
+        - DataTransformationConfig: A dataclass object containing the data transformation configuration.
+        """
+        
+        # Extract the data transformation configuration from the main config
+        config = self.config.data_transformation
+
+        # Ensure the specified root directory for data transformation exists (creates it if not)
+        create_directories([config.root_dir])
+
+        # Create an instance of the DataTransformationConfig dataclass using the extracted configuration
+        data_transformation_config = DataTransformationConfig(
+            root_dir=config.root_dir,
+            data_path=config.data_path
+        )
+
+        return data_transformation_config

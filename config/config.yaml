@@ -1,13 +1,19 @@
 # Root directory for all artifacts
 artifacts_root: artifacts
 
+
+# Configuration related to data ingestion
 data_ingestion:
+
   # Directory where data ingestion artifacts are stored
   root_dir: artifacts/data_ingestion
+
   # URL from which data will be downloaded
   source_URL: https://github.com/etietopabraham/storage/raw/main/jobs_data_simply_hired.csv.zip
+
   # Path to the local file where downloaded data will be saved
   local_data_file: artifacts/data_ingestion/jobs_data_simply_hired.csv.zip
+
   # Directory where the zipped data will be extracted
   unzip_dir: artifacts/data_ingestion
 
@@ -29,7 +35,14 @@ data_validation:
 
 
 
-# Data Transformation.
+# Data Transformation Configuration
 data_transformation:
+  
+  # Root directory where all data transformation artifacts will be stored.
   root_dir: artifacts/data_transformation
-  data_path: artifacts/data_ingestion/jobs_data_simply_hired.csv
+  
+  # Path to the validated dataset that will be used as input for transformation.
+  data_path: artifacts/data_validation/validated_jobs_data.csv
+
+
+

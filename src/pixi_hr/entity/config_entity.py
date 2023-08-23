@@ -29,3 +29,23 @@ class DataValidationConfig:
     
     # Store all schema configuration
     all_schema: dict
+
+
+@dataclass(frozen=True)
+class DataTransformationConfig:
+    """
+    Configuration entity for the Data Transformation pipeline.
+    
+    This configuration entity provides necessary paths and directories 
+    related to data transformation activities.
+    
+    Attributes:
+    - root_dir (Path): The root directory where data transformation artifacts are stored.
+    - data_path (Path): The path to the dataset (typically CSV) that needs to be transformed.
+    """
+
+    # Root directory for storing transformation-related artifacts
+    root_dir: Path
+
+    # Path to the validated dataset for transformation
+    data_path: Path
