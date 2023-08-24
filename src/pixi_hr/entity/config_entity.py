@@ -75,3 +75,29 @@ class ModelTrainerConfig:
     alpha: float
     l1_ratio: float
     target_column: str
+
+
+@dataclass(frozen=True)
+class ModelEvaluationConfig:
+    """Configuration parameters for the model evaluation stage."""
+
+    # Root directory to store evaluation artifacts
+    root_dir: Path
+
+    # Path to the test dataset (output from the data transformation stage)
+    test_data_path: Path
+
+    # Path to the trained model (output from the model trainer stage)
+    model_path: Path
+
+    # File path to save computed evaluation metrics in JSON format
+    metric_file_name: Path
+
+    # Dictionary containing all the parameters for model evaluation
+    all_params: dict
+
+    # Name of the target column in the dataset
+    target_column: str
+
+    # URI for the MLFlow server or database
+    mlflow_uri: str

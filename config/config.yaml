@@ -4,7 +4,6 @@ artifacts_root: artifacts
 
 
 # Configuration related to data ingestion
-
 data_ingestion:
 
   # Directory where data ingestion artifacts are stored
@@ -21,9 +20,8 @@ data_ingestion:
 
 
 # Configuration related to data validation.
-
 data_validation:
-  
+
   # Path to the root directory where data validation artifacts are stored.
   root_dir: artifacts/data_validation
   
@@ -39,7 +37,6 @@ data_validation:
 
 
 # Data Transformation Configuration
-
 data_transformation:
   
   # Root directory where all data transformation artifacts will be stored.
@@ -50,7 +47,6 @@ data_transformation:
 
 
 # Model Trainer Configuration
-
 model_trainer:
   # Path to the root directory where model trainer artifacts are stored.
   root_dir: artifacts/model_trainer
@@ -63,5 +59,23 @@ model_trainer:
   
   # Name of the serialized trained model to be saved.
   model_name: model.joblib
+
+
+# Model Evaluation Configuration
+model_evaluation:
+  # Root directory to store evaluation artifacts
+  root_dir: artifacts/model_evaluation
+  
+  # Path to the test dataset (output from the data transformation stage)
+  test_data_path: artifacts/data_transformation/test_data.csv
+  
+  # Path to the trained model (output from the model trainer stage)
+  model_path: artifacts/model_trainer/model.joblib
+  
+  # File path to save computed evaluation metrics in JSON format
+  metric_file_name: artifacts/model_evaluation/metrics.json
+
+  # MLFlow URI
+  mlflow_uri: https://dagshub.com/etietopabraham/pixi_hr.mlflow
 
 
