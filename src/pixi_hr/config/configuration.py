@@ -100,7 +100,7 @@ class ConfigurationManager:
         return data_transformation_config
 
 
-    def get_model_trainer_config(self, chosen_model_type="ElasticNet") -> ModelTrainerConfig:
+    def get_model_trainer_config(self, chosen_model_type="RandomForest") -> ModelTrainerConfig:
         """
         Fetches the Model Trainer Configuration based on the chosen model type.
 
