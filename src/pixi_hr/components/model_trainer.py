@@ -4,6 +4,8 @@ import joblib
 import pandas as pd
 import os
 from pixi_hr import logger
+from sklearn.ensemble import RandomForestRegressor
+
 
 from pixi_hr.config.configuration import ModelTrainerConfig
 
@@ -37,11 +39,12 @@ class ModelTrainer:
         self.train_data = pd.read_csv(self.config.train_data_path)
         self.test_data = pd.read_csv(self.config.test_data_path)
 
-    # def print_data(self):
-    #     print("Scaled Train Features")
-    #     print(pd.DataFrame(self.train_x, columns=self.train_data.columns[:-1]).head())  # Exclude target column
-    #     print("Scaled Test Features")
-    #     print(pd.DataFrame(self.test_x, columns=self.test_data.columns[:-1]).head())  # Exclude target column
+    def print_data(self):
+        print("Scaled Train Features")
+        print(pd.DataFrame(self.train_x).head())
+        print("Scaled Test Features")
+        print(pd.DataFrame(self.test_x).head())
+
 
 
     def preprocess_data(self):
@@ -55,6 +58,7 @@ class ModelTrainer:
 
         self.test_x = self.test_data[qualification_columns]
         self.test_y = self.test_data[self.config.target_column]
+
 
     def scale_features(self):
         """Scale the features using StandardScaler."""
@@ -90,6 +94,7 @@ class ModelTrainer:
             raise e
 
     def main(self):
+
         """Main execution method that orchestrates the model training process."""
         
         logger.info("Loading data...")
@@ -97,14 +102,28 @@ class ModelTrainer:
         
         logger.info("Preprocessing data...")
         self.preprocess_data()
+
+        # Depending on the model type from the configuration, initialize the appropriate model
+        if self.config.model_type == "ElasticNet":
+            model = ElasticNet(
+                alpha=self.config.model_params["alpha"], 
+                l1_ratio=self.config.model_params["l1_ratio"], 
+                random_state=44
+            )
+        elif self.config.model_type == "RandomForest":
+            model = RandomForestRegressor(
+                n_estimators=self.config.model_params["n_estimators"],
+                max_depth=self.config.model_params["max_depth"],
+                min_samples_split=self.config.model_params["min_samples_split"],
+                min_samples_leaf=self.config.model_params["min_samples_leaf"],
+                max_features=self.config.model_params["max_features"],
+                random_state=self.config.model_params["random_state"]
+            )
+        else:
+            raise ValueError(f"Unsupported model type: {self.config.model_type}")
         
-        logger.info("Scaling features...")
-        self.scale_features()
-        
-        logger.info("Initializing and training the ElasticNet model...")
-        lr = ElasticNet(alpha=self.config.alpha, l1_ratio=self.config.l1_ratio, random_state=44)
-        trained_model = self.train_model(lr)
+        trained_model = self.train_model(model)
         
         logger.info("Saving the trained model...")
         self.save_model(trained_model)
-
+        

@@ -24,6 +24,11 @@ class ConfigurationManager:
         # Load the schema details from the YAML file
         self.schema = read_yaml(schema_filepath)
 
+        # Convert 'None' string to Python None object for specific parameters
+        for param, value in self.params['RandomForest'].items():
+            if value == 'None':
+                self.params['RandomForest'][param] = None
+
 
         # Create directories as specified in the configuration (e.g., for storing artifacts)
         create_directories([self.config.artifacts_root])
@@ -95,59 +100,81 @@ class ConfigurationManager:
         return data_transformation_config
 
 
-    def get_model_trainer_config(self) -> ModelTrainerConfig:
-            """
-            Fetches the Model Trainer Configuration.
-
-            Returns:
-                ModelTrainerConfig: A dataclass instance containing the model trainer configuration.
-            """
-            
-            # Extract model trainer configuration and parameters for ElasticNet
-            config = self.config.model_trainer
-            params = self.params.ElasticNet
-            schema = self.schema.TARGET_COLUMN
-
-            # Create the directory where model training artifacts will be stored
-            create_directories([config.root_dir])
-
-            # Create an instance of the ModelTrainerConfig dataclass using the extracted configuration and parameters
-            model_trainer_config = ModelTrainerConfig(
-                root_dir=config.root_dir,
-                train_data_path=config.train_data_path,
-                test_data_path=config.test_data_path,
-                model_name=config.model_name,
-                alpha=params.alpha,
-                l1_ratio=params.l1_ratio,
-                target_column=schema.name
-            )
-
-            return model_trainer_config
-    
-
-    def get_model_evaluation_config(self) -> ModelEvaluationConfig:
+    def get_model_trainer_config(self, chosen_model_type="ElasticNet") -> ModelTrainerConfig:
         """
-        Fetches the configuration parameters required for the model evaluation stage.
-        
+        Fetches the Model Trainer Configuration based on the chosen model type.
+
+        Args:
+        - chosen_model_type (str): The desired model type (either "ElasticNet" or "RandomForest").
+
         Returns:
-        - ModelEvaluationConfig: Dataclass containing the configuration parameters for the model evaluation stage.
+            ModelTrainerConfig: A dataclass instance containing the model trainer configuration.
         """
-        config = self.config.model_evaluation
-        params = self.params.ElasticNet
+        
+        # Extract model trainer configuration
+        config = self.config.model_trainer
+
+        # Depending on the chosen model type, fetch the respective parameters
+        if chosen_model_type == "ElasticNet":
+            params = self.params.ElasticNet
+        elif chosen_model_type == "RandomForest":
+            params = self.params.RandomForest
+        else:
+            raise ValueError(f"Unsupported model type: {chosen_model_type}")
+        
         schema = self.schema.TARGET_COLUMN
 
-        # Ensure the directory for model evaluation artifacts exists
+        # Create the directory where model training artifacts will be stored
         create_directories([config.root_dir])
 
-        # Build the model evaluation configuration
-        model_evaluation_config = ModelEvaluationConfig(
+        # Create an instance of the ModelTrainerConfig dataclass using the extracted configuration and parameters
+        model_trainer_config = ModelTrainerConfig(
             root_dir=config.root_dir,
+            train_data_path=config.train_data_path,
             test_data_path=config.test_data_path,
-            model_path=config.model_path,
-            metric_file_name=config.metric_file_name,
-            all_params=params,
+            model_name=config.model_name,
             target_column=schema.name,
-            mlflow_uri=config.mlflow_uri
+            model_type=chosen_model_type,
+            model_params=params
         )
 
-        return model_evaluation_config
+        return model_trainer_config
+    
+
+    def get_model_evaluation_config(self, chosen_model_type="RandomForest") -> ModelEvaluationConfig:
+            """
+            Fetches the configuration parameters required for the model evaluation stage based on the chosen model type.
+            
+            Args:
+            - chosen_model_type (str): The desired model type (either "ElasticNet" or "RandomForest").
+            
+            Returns:
+            - ModelEvaluationConfig: Dataclass containing the configuration parameters for the model evaluation stage.
+            """
+            config = self.config.model_evaluation
+
+            # Depending on the chosen model type, fetch the respective parameters
+            if chosen_model_type == "ElasticNet":
+                params = self.params.ElasticNet
+            elif chosen_model_type == "RandomForest":
+                params = self.params.RandomForest
+            else:
+                raise ValueError(f"Unsupported model type: {chosen_model_type}")
+                
+            schema = self.schema.TARGET_COLUMN
+
+            # Ensure the directory for model evaluation artifacts exists
+            create_directories([config.root_dir])
+
+            # Build the model evaluation configuration
+            model_evaluation_config = ModelEvaluationConfig(
+                root_dir=config.root_dir,
+                test_data_path=config.test_data_path,
+                model_path=config.model_path,
+                metric_file_name=config.metric_file_name,
+                all_params=params,
+                target_column=schema.name,
+                mlflow_uri=config.mlflow_uri
+            )
+
+            return model_evaluation_config

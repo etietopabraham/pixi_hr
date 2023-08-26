@@ -72,9 +72,14 @@ class ModelTrainerConfig:
     train_data_path: Path
     test_data_path: Path
     model_name: str
-    alpha: float
-    l1_ratio: float
+    model_type: str
+    model_params: dict
     target_column: str
+
+    
+
+    
+
 
 
 @dataclass(frozen=True)
@@ -101,3 +106,4 @@ class ModelEvaluationConfig:
 
     # URI for the MLFlow server or database
     mlflow_uri: str
+

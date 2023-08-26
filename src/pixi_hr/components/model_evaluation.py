@@ -88,8 +88,11 @@ class ModelEvaluation:
             mlflow.log_metric("mae", mae)
             mlflow.log_metric("r2", r2)
 
+            # Determine model name dynamically
+            model_name = type(self.model).__name__
+
             # Log model into MLflow
             if tracking_url_type_score != "file":
-                mlflow.sklearn.log_model(self.model, "model", registered_model_name="ElasticnetModel")
+                mlflow.sklearn.log_model(self.model, "model", registered_model_name=model_name)
             else:
                 mlflow.sklearn.log_model(self.model, "model")
