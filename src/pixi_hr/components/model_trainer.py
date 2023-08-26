@@ -37,18 +37,23 @@ class ModelTrainer:
         self.train_data = pd.read_csv(self.config.train_data_path)
         self.test_data = pd.read_csv(self.config.test_data_path)
 
+    # def print_data(self):
+    #     print("Scaled Train Features")
+    #     print(pd.DataFrame(self.train_x, columns=self.train_data.columns[:-1]).head())  # Exclude target column
+    #     print("Scaled Test Features")
+    #     print(pd.DataFrame(self.test_x, columns=self.test_data.columns[:-1]).head())  # Exclude target column
+
+
     def preprocess_data(self):
         """Drop unwanted columns and split data into features and target."""
-        columns_to_drop = ['date_of_job_post', 'job_link', 'job_qualifications', 
-                           'job_description', 'job_summary', 'date_of_job_post_temp']
         
-        self.train_data.drop(columns_to_drop, axis=1, inplace=True)
-        self.test_data.drop(columns_to_drop, axis=1, inplace=True)
-
-        self.train_x = self.train_data.drop([self.config.target_column], axis=1)
+        # Filter out columns that are not related to job_qualifications (i.e., prefixed by 'qual_')
+        qualification_columns = [col for col in self.train_data.columns if col.startswith('qual_')]
+        
+        self.train_x = self.train_data[qualification_columns]
         self.train_y = self.train_data[self.config.target_column]
 
-        self.test_x = self.test_data.drop([self.config.target_column], axis=1)
+        self.test_x = self.test_data[qualification_columns]
         self.test_y = self.test_data[self.config.target_column]
 
     def scale_features(self):
@@ -86,9 +91,20 @@ class ModelTrainer:
 
     def main(self):
         """Main execution method that orchestrates the model training process."""
+        
+        logger.info("Loading data...")
         self.load_data()
+        
+        logger.info("Preprocessing data...")
         self.preprocess_data()
+        
+        logger.info("Scaling features...")
         self.scale_features()
+        
+        logger.info("Initializing and training the ElasticNet model...")
         lr = ElasticNet(alpha=self.config.alpha, l1_ratio=self.config.l1_ratio, random_state=44)
         trained_model = self.train_model(lr)
+        
+        logger.info("Saving the trained model...")
         self.save_model(trained_model)
+

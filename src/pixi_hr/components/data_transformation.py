@@ -3,6 +3,9 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from pixi_hr import logger
 from sklearn.preprocessing import LabelEncoder
+import re
+from sklearn.preprocessing import MultiLabelBinarizer
+
 from pixi_hr.config.configuration import DataTransformationConfig
 
 class DataTransformation:
@@ -33,6 +36,44 @@ class DataTransformation:
             logger.error(f"Error reading data file: {e}")
             raise
 
+
+    def clean_skills(self, skill_list_str):
+        """Clean the skills from the job_qualifications column."""
+        # Convert the string representation of a list to an actual list
+        skill_list = eval(skill_list_str)
+
+        # Clean each skill
+        cleaned_skills = []
+        for skill in skill_list:
+            cleaned_skill = skill.strip().lower()  # Convert to lowercase and remove leading/trailing whitespaces
+            cleaned_skill = re.sub(r'[^a-z0-9]', '', cleaned_skill)  # Remove special characters
+            cleaned_skills.append(cleaned_skill)
+
+        return cleaned_skills
+    
+    def one_hot_encode_qualifications(self):
+        """One-hot encodes the job qualifications."""
+        # Clean the skills
+        self.df['job_qualifications'] = self.df['job_qualifications'].apply(self.clean_skills)
+
+        # Initialize the MultiLabelBinarizer
+        mlb = MultiLabelBinarizer()
+
+        # One-hot encode the cleaned skills
+        encoded_qualifications = mlb.fit_transform(self.df['job_qualifications'])
+
+        # Add a prefix to the encoded column names
+        encoded_columns = [f"qual_{col}" for col in mlb.classes_]
+
+        # Convert the one-hot encoded skills into a DataFrame
+        encoded_df = pd.DataFrame(encoded_qualifications, columns=encoded_columns)
+
+        # Drop the original job_qualifications column and concat the encoded DataFrame
+        self.df = pd.concat([self.df.drop('job_qualifications', axis=1), encoded_df], axis=1)
+
+        logger.info("One-hot encoding of job qualifications completed.")
+
+
     
     def datetime_conversion_and_extraction(self):
         """
@@ -50,7 +91,7 @@ class DataTransformation:
         self.df['second_of_job_post'] = self.df['date_of_job_post'].dt.second
 
         logger.info("Datetime conversion and feature extraction completed.")
-
+    
    
     def categorical_encoding(self):
         """
@@ -107,7 +148,11 @@ class DataTransformation:
         logger.info("Handling Missing Values...")
         self.handle_missing_values()
 
-        # Step 4: Split Data into Train and Test sets
+        # Step 4: One-Hot Encoding of Job Qualifications
+        logger.info("One-Hot Encoding of Job Qualifications...")
+        self.one_hot_encode_qualifications()
+
+        # Step 5: Split Data into Train and Test sets
         logger.info("Splitting Data...")
         self.split_data()
 

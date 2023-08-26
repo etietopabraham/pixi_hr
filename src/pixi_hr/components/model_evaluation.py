@@ -54,11 +54,13 @@ class ModelEvaluation:
         """
         Preprocesses the test data: Drops unwanted columns and splits data into features and target.
         """
-        columns_to_drop = ['date_of_job_post', 'job_link', 'job_qualifications', 
-                           'job_description', 'job_summary', 'date_of_job_post_temp']
-        self.test_data.drop(columns_to_drop, axis=1, inplace=True)
-        self.test_x = self.test_data.drop([self.config.target_column], axis=1)
+        
+        # Filter out columns that are not related to job_qualifications (i.e., prefixed by 'qual_')
+        qualification_columns = [col for col in self.test_data.columns if col.startswith('qual_')]
+        
+        self.test_x = self.test_data[qualification_columns]
         self.test_y = self.test_data[self.config.target_column]
+
 
     def log_into_mlflow(self):
         """
