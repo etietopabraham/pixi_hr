@@ -13,4 +13,6 @@ types-PyYAML
 Flask
 Flask-Cors
 python-box
+cloudscraper
+bs4
 -e .

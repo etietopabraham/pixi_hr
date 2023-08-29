@@ -10,10 +10,11 @@ data_ingestion:
   root_dir: artifacts/data_ingestion
 
   # URL from which data will be downloaded
-  source_URL: https://github.com/etietopabraham/storage/raw/main/jobs_data_simply_hired.csv.zip
+  source_URL: https://github.com/etietopabraham/storage/raw/main/jobs_simply_hired.csv.zip
+  
 
   # Path to the local file where downloaded data will be saved
-  local_data_file: artifacts/data_ingestion/jobs_data_simply_hired.csv.zip
+  local_data_file: artifacts/data_ingestion/jobs_simply_hired.csv.zip
 
   # Directory where the zipped data will be extracted
   unzip_dir: artifacts/data_ingestion
@@ -29,7 +30,7 @@ data_validation:
   validated_data_file: artifacts/data_validation/validated_jobs_data.csv
   
   # Location of the extracted data (in this case, a CSV file) that needs to be validated.
-  unzip_data_dir: artifacts/data_ingestion/jobs_data_simply_hired.csv
+  unzip_data_dir: artifacts/data_ingestion/jobs_simply_hired.csv
   
   # Path to a status file used to track the progress or status of data validation.
   STATUS_FILE: artifacts/data_validation/status.txt

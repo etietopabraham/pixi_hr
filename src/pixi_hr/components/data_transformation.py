@@ -5,6 +5,8 @@ from pixi_hr import logger
 from sklearn.preprocessing import LabelEncoder
 import re
 from sklearn.preprocessing import MultiLabelBinarizer
+import ast
+
 
 from pixi_hr.config.configuration import DataTransformationConfig
 
@@ -39,17 +41,24 @@ class DataTransformation:
 
     def clean_skills(self, skill_list_str):
         """Clean the skills from the job_qualifications column."""
-        # Convert the string representation of a list to an actual list
-        skill_list = eval(skill_list_str)
+        try:
+            # Safely evaluate the string as a Python expression
+            skill_list = ast.literal_eval(skill_list_str)
 
-        # Clean each skill
-        cleaned_skills = []
-        for skill in skill_list:
-            cleaned_skill = skill.strip().lower()  # Convert to lowercase and remove leading/trailing whitespaces
-            cleaned_skill = re.sub(r'[^a-z0-9]', '', cleaned_skill)  # Remove special characters
-            cleaned_skills.append(cleaned_skill)
+            if not isinstance(skill_list, list):
+                raise ValueError("Input is not a list")
 
-        return cleaned_skills
+            # Clean each skill
+            cleaned_skills = []
+            for skill in skill_list:
+                cleaned_skill = skill.strip().lower()  # Convert to lowercase and remove leading/trailing whitespaces
+                cleaned_skill = re.sub(r'[^a-z0-9]', '', cleaned_skill)  # Remove special characters
+                cleaned_skills.append(cleaned_skill)
+
+            return cleaned_skills
+        except (ValueError, SyntaxError):
+            # Handle invalid input gracefully
+            return []
     
     def one_hot_encode_qualifications(self):
         """One-hot encodes the job qualifications."""
@@ -109,7 +118,8 @@ class DataTransformation:
         """
         Handle missing values in the specified columns by dropping them.
         """
-        self.df.dropna(subset=['job_qualifications', 'job_type', 'job_location'], inplace=True)
+        # self.df.dropna(subset=['job_qualifications', 'job_type', 'job_location'], inplace=True)
+        self.df.dropna()
         logger.info("Handling of missing values completed.")
 
     

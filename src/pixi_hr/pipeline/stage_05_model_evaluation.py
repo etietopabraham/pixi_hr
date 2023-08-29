@@ -41,9 +41,11 @@ class ModelEvaluationPipeline:
 
         # Initialize the ModelEvaluation component
         model_evaluation = ModelEvaluation(config=model_evaluation_config)
+        logger.info("Initialized Model Evaluation Configuration  Successfully.")
 
         # Log the evaluation metrics into MLFlow
         model_evaluation.log_into_mlflow()
+        logger.info("Log Model Evaluation to MLFlow Completed Successfully.")
 
         logger.info("Model Evaluation Pipeline Completed Successfully.")
 
